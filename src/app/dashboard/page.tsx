@@ -10,6 +10,7 @@
  * - Loading state display
  * - User information display
  * - Sign out functionality
+ * - Suspense boundary for client-side navigation
  * 
  * Dependencies:
  * - @/contexts/AuthContext: For authentication state and sign out functionality
@@ -21,9 +22,19 @@
 
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 
-export default function DashboardPage() {
+// Loading component for Suspense fallback
+function DashboardLoading() {
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-center">
+      <div className="text-xl">Loading dashboard...</div>
+    </div>
+  );
+}
+
+// Main Dashboard component
+function DashboardContent() {
   // Get authentication data and functions from context
   const { user, isLoading, signOut } = useAuth();
   const router = useRouter();
@@ -108,5 +119,14 @@ export default function DashboardPage() {
         </div>
       </main>
     </div>
+  );
+}
+
+// Main page component with Suspense boundary
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={<DashboardLoading />}>
+      <DashboardContent />
+    </Suspense>
   );
 } 
