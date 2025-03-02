@@ -20,7 +20,7 @@ import type { NextRequest } from 'next/server';
 import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs';
 
 // Routes that require authentication
-const PROTECTED_ROUTES = ['/dashboard', '/profile', '/settings'];
+const PROTECTED_ROUTES = ['/dashboard', '/profile', '/settings', '/files', '/messages', '/ais', '/jobs'];
 
 // Function to check if a route is protected
 const isProtectedRoute = (path: string): boolean => {
