@@ -8,43 +8,13 @@
  * - Upload progress tracking
  * - Error handling
  * - Success feedback
- * - Supabase metadata tracking
  */
 
 'use client';
 
-import { useState, useRef, ChangeEvent, DragEvent } from 'react';
+import React, { useState, useRef, ChangeEvent, DragEvent } from 'react';
 import { ArrowUpTrayIcon, DocumentIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/solid';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-
-interface FileUploaderProps {
-  onUploadComplete?: (fileData: UploadedFile) => void;
-  onUploadError?: (error: Error) => void;
-  multiple?: boolean;
-  accept?: string;
-  maxSizeMB?: number;
-  prefix?: string;
-}
-
-interface UploadedFile {
-  key: string;
-  name: string;
-  size: number;
-  type: string;
-  url?: string;
-}
-
-interface FileWithStatus {
-  file: File;
-  id: string;
-  progress: number;
-  status: 'pending' | 'uploading' | 'success' | 'error';
-  error?: string;
-  key?: string;
-  url?: string;
-  fileId?: string; // Supabase file ID
-}
 
 // Helper function to update file status
 async function updateFileStatus(fileId: string, status: string, error_message?: string) {
@@ -77,6 +47,34 @@ async function updateFileStatus(fileId: string, status: string, error_message?: 
   }
 }
 
+interface FileUploaderProps {
+  onUploadComplete?: (fileData: UploadedFile) => void;
+  onUploadError?: (error: Error) => void;
+  multiple?: boolean;
+  accept?: string;
+  maxSizeMB?: number;
+  prefix?: string;
+}
+
+interface UploadedFile {
+  key: string;
+  name: string;
+  size: number;
+  type: string;
+  url?: string;
+}
+
+interface FileWithStatus {
+  file: File;
+  id: string;
+  progress: number;
+  status: 'pending' | 'uploading' | 'success' | 'error';
+  error?: string;
+  key?: string;
+  url?: string;
+  fileId?: string;
+}
+
 export default function FileUploader({
   onUploadComplete,
   onUploadError,
@@ -88,7 +86,6 @@ export default function FileUploader({
   const [files, setFiles] = useState<FileWithStatus[]>([]);
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const supabase = createClientComponentClient();
   
   // Format file size for display
   const formatFileSize = (bytes: number): string => {

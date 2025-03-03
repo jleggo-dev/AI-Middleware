@@ -74,7 +74,7 @@ function DashboardContent() {
       <div className="py-6">
         <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
         <p className="mt-1 text-sm text-gray-500">
-          Welcome back, {user.email}. Here's an overview of your activity.
+          Here&apos;s what&apos;s happening with your account
         </p>
       </div>
       

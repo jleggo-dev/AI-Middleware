@@ -13,7 +13,7 @@
 
 'use client';
 
-import { Fragment, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
@@ -23,7 +23,13 @@ import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 export default function Nav() {
   const { user, signOut } = useAuth();
   const pathname = usePathname();
-  const [isOpen, setIsOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
 
   // Navigation items
   const navigation = [
@@ -52,7 +58,7 @@ export default function Nav() {
             <div className="flex justify-between h-16">
               <div className="flex">
                 <div className="flex-shrink-0 flex items-center">
-                  <Link href="/dashboard" className="text-xl font-bold text-indigo-600">
+                  <Link href="/" className="text-xl font-bold text-indigo-600">
                     AI Middleware
                   </Link>
                 </div>
@@ -84,7 +90,7 @@ export default function Nav() {
                     </Menu.Button>
                   </div>
                   <Transition
-                    as={Fragment}
+                    as={React.Fragment}
                     enter="transition ease-out duration-200"
                     enterFrom="transform opacity-0 scale-95"
                     enterTo="transform opacity-100 scale-100"
