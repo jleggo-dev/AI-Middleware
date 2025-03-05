@@ -12,27 +12,28 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { DocumentIcon } from '@heroicons/react/24/outline';
 import FileUploader from '@/components/FileUploader';
-
-interface File {
-  key: string;
-  name: string;
-  size: number;
-  type: string;
-  url?: string;
-}
+import { FileTreeView } from '@/components/FileTreeView';
+import { FileControls } from '@/components/FileControls';
+import { useFiles } from '@/hooks/useFiles';
 
 export default function FilesPage() {
   const [error, setError] = useState<string | null>(null);
   const [showUploader, setShowUploader] = useState(false);
-  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  
+  const {
+    loading,
+    error: fetchError,
+    data,
+    params,
+    updateParams,
+    fileTypes = [],
+    refresh
+  } = useFiles();
 
   // Handle file upload completion
-  const handleUploadComplete = (fileData: File) => {
-    // Add the newly uploaded file to the list of successful uploads
-    setUploadedFiles(prevFiles => [fileData, ...prevFiles]);
-    
-    // Show a success message
-    console.log('File uploaded successfully:', fileData.name);
+  const handleUploadComplete = () => {
+    setShowUploader(false);
+    refresh();
   };
 
   // Handle file upload error
@@ -41,13 +42,10 @@ export default function FilesPage() {
     setError(`Upload failed: ${error.message}`);
   };
 
-  // Format file size for display
-  const formatFileSize = (bytes: number): string => {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  // Placeholder delete handler
+  const handleDelete = (id: string) => {
+    console.log('Delete file:', id);
+    // TODO: Implement delete functionality
   };
 
   return (
@@ -56,14 +54,14 @@ export default function FilesPage() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Files</h1>
         <p className="mt-1 text-sm text-gray-500">
-          Upload files to your account
+          Manage your files
         </p>
         <div className="mt-4 flex space-x-3">
           <button
             onClick={() => setShowUploader(!showUploader)}
             className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
-            {showUploader ? 'Cancel Upload' : 'Upload File'}
+            {showUploader ? 'Back to Files' : 'Upload File'}
           </button>
           <Link 
             href="/files/test" 
@@ -87,8 +85,8 @@ export default function FilesPage() {
         </div>
       )}
 
-      {/* Error message */}
-      {error && (
+      {/* Error messages */}
+      {(error || fetchError) && (
         <div className="mb-4 bg-red-50 border border-red-200 rounded-md p-4">
           <div className="flex">
             <div className="flex-shrink-0">
@@ -97,75 +95,62 @@ export default function FilesPage() {
               </svg>
             </div>
             <div className="ml-3">
-              <p className="text-sm text-red-700">{error}</p>
+              <p className="text-sm text-red-700">{error || fetchError}</p>
             </div>
           </div>
         </div>
       )}
 
-      {/* Recently Uploaded Files (Session Only) */}
-      {uploadedFiles.length > 0 && (
-        <div className="bg-white shadow overflow-hidden sm:rounded-md">
-          <div className="px-4 py-5 sm:p-6">
-            <h2 className="text-lg font-medium text-gray-900 mb-4">Recently Uploaded Files</h2>
-            <p className="text-sm text-gray-500 mb-4">
-              These files were uploaded in your current session. This list will clear when you refresh the page.
-            </p>
-            
-            <ul className="divide-y divide-gray-200">
-              {uploadedFiles.map((file) => (
-                <li key={file.key} className="py-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
-                        <DocumentIcon className="h-8 w-8 text-gray-400" />
-                      </div>
-                      <div className="ml-4">
-                        <h3 className="text-sm font-medium text-gray-900">{file.name}</h3>
-                        <div className="text-xs text-gray-500 mt-1 flex space-x-4">
-                          <span>{formatFileSize(file.size)}</span>
-                          <span>Type: {file.type || 'Unknown'}</span>
-                        </div>
-                      </div>
-                    </div>
-                    {file.url && (
-                      <button 
-                        className="inline-flex items-center px-3 py-1 border border-gray-300 text-sm font-medium rounded-md text-indigo-700 bg-white hover:bg-gray-50"
-                        onClick={() => window.open(file.url, '_blank')}
+      {/* Controls and File Tree */}
+      {data && (
+        <>
+          <FileControls
+            params={params}
+            onParamsChange={updateParams}
+            fileTypes={fileTypes}
+            totalCount={data.totalCount}
+            currentPage={data.currentPage}
+            totalPages={data.totalPages}
+          />
+
+          {loading ? (
+            <div className="flex justify-center items-center py-12">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+            </div>
+          ) : data.files.length > 0 ? (
+            <div className="bg-white shadow rounded-lg">
+              <FileTreeView
+                nodes={data.files}
+                onDelete={handleDelete}
+              />
+            </div>
+          ) : (
+            <div className="bg-white shadow overflow-hidden sm:rounded-md">
+              <div className="px-4 py-5 sm:p-6">
+                <div className="text-center py-12">
+                  <DocumentIcon className="mx-auto h-12 w-12 text-gray-400" />
+                  <h3 className="mt-2 text-sm font-medium text-gray-900">No files found</h3>
+                  <p className="mt-1 text-sm text-gray-500">
+                    {params.filterStatus || params.filterType
+                      ? 'Try adjusting your filters'
+                      : 'Upload files to get started'}
+                  </p>
+                  {!params.filterStatus && !params.filterType && (
+                    <div className="mt-6">
+                      <button
+                        type="button"
+                        onClick={() => setShowUploader(true)}
+                        className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                       >
-                        View
+                        Upload a File
                       </button>
-                    )}
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      )}
-      
-      {/* Placeholder message when no uploader is shown and no files uploaded */}
-      {!showUploader && uploadedFiles.length === 0 && !error && (
-        <div className="bg-white shadow overflow-hidden sm:rounded-md">
-          <div className="px-4 py-5 sm:p-6">
-            <div className="text-center py-12">
-              <DocumentIcon className="mx-auto h-12 w-12 text-gray-400" />
-              <h3 className="mt-2 text-sm font-medium text-gray-900">Upload files to get started</h3>
-              <p className="mt-1 text-sm text-gray-500">
-                Click the Upload File button above to upload your first file.
-              </p>
-              <div className="mt-6">
-                <button
-                  type="button"
-                  onClick={() => setShowUploader(true)}
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                  Upload a File
-                </button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        </div>
+          )}
+        </>
       )}
     </div>
   );
