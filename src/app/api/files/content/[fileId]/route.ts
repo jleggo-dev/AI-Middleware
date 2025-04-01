@@ -9,7 +9,8 @@
  * - Limits content retrieval to optimize loading speed
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { 
@@ -121,13 +122,21 @@ async function processTextContent(stream: Readable): Promise<{
   }
 }
 
+// Define the params type exactly as Next.js expects it
+type Params = {
+  params: {
+    fileId: string;
+  };
+};
+
 export async function GET(
   request: NextRequest,
-  context: { params: { fileId: string } }
+  params: Params
 ) {
   try {
-    // Create Supabase client
-    const supabase = createRouteHandlerClient({ cookies });
+    // Create Supabase client using the new format for Next.js 15
+    const cookieStore = cookies();
+    const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
     
     // Get user session
     const { data: { session }, error: sessionError } = await supabase.auth.getSession();
@@ -142,7 +151,7 @@ export async function GET(
     const { data: file, error: fileError } = await supabase
       .from('files')
       .select('*')
-      .eq('id', context.params.fileId)
+      .eq('id', params.params.fileId)
       .single();
 
     if (fileError || !file) {
