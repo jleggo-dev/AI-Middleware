@@ -1,30 +1,30 @@
 'use client'
 
-import { CSVMessageConstructor } from '@/components/CSVMessageConstructor'
-import { CSVConfig } from '@/components/CSVMessageConstructor/store'
+import { MessageConstructor } from '@/components/MessageConstructor'
+import { Config } from '@/components/MessageConstructor/store'
 
 // Mock data for testing
 const MOCK_COLUMNS = [
-  { id: '1', name: 'Customer Name', selected: false },
-  { id: '2', name: 'Revenue', selected: true },
-  { id: '3', name: 'Industry', selected: false },
-  { id: '4', name: 'Employee Count', selected: false },
-  { id: '5', name: 'Location', selected: false },
-  { id: '6', name: 'Founded Year', selected: false },
-  { id: '7', name: 'Annual Growth', selected: false },
-  { id: '8', name: 'Market Share', selected: false },
-  { id: '9', name: 'Customer Satisfaction', selected: false },
-  { id: '10', name: 'Product Categories', selected: false },
-  { id: '11', name: 'Last Contact Date', selected: false },
-  { id: '12', name: 'Account Manager', selected: false },
-  { id: '13', name: 'Contract Value', selected: false },
-  { id: '14', name: 'Renewal Date', selected: false },
-  { id: '15', name: 'Support Tier', selected: false },
-  { id: '16', name: 'Integration Status', selected: false },
-  { id: '17', name: 'Custom Fields', selected: false },
-  { id: '18', name: 'Notes', selected: false },
-  { id: '19', name: 'Tags', selected: false },
-  { id: '20', name: 'Priority Level', selected: false },
+  { id: '1', name: 'Customer Name', selected: false, order: 0 },
+  { id: '2', name: 'Revenue', selected: true, order: 1 },
+  { id: '3', name: 'Industry', selected: false, order: 2 },
+  { id: '4', name: 'Employee Count', selected: false, order: 3 },
+  { id: '5', name: 'Location', selected: false, order: 4 },
+  { id: '6', name: 'Founded Year', selected: false, order: 5 },
+  { id: '7', name: 'Annual Growth', selected: false, order: 6 },
+  { id: '8', name: 'Market Share', selected: false, order: 7 },
+  { id: '9', name: 'Customer Satisfaction', selected: false, order: 8 },
+  { id: '10', name: 'Product Categories', selected: false, order: 9 },
+  { id: '11', name: 'Last Contact Date', selected: false, order: 10 },
+  { id: '12', name: 'Account Manager', selected: false, order: 11 },
+  { id: '13', name: 'Contract Value', selected: false, order: 12 },
+  { id: '14', name: 'Renewal Date', selected: false, order: 13 },
+  { id: '15', name: 'Support Tier', selected: false, order: 14 },
+  { id: '16', name: 'Integration Status', selected: false, order: 15 },
+  { id: '17', name: 'Custom Fields', selected: false, order: 16 },
+  { id: '18', name: 'Notes', selected: false, order: 17 },
+  { id: '19', name: 'Tags', selected: false, order: 18 },
+  { id: '20', name: 'Priority Level', selected: false, order: 19 },
 ]
 
 const MOCK_FIRST_ROW = {
@@ -50,28 +50,25 @@ const MOCK_FIRST_ROW = {
   'Priority Level': 'High'
 }
 
-export default function CSVConstructorTestPage() {
-  const handleConfigUpdate = (config: CSVConfig) => {
-    console.log('CSV Config Updated:', config)
+/**
+ * Test page for the MessageConstructor component
+ */
+export default function TestPage() {
+  const handleConfigUpdate = (config: Config) => {
+    console.log('Config updated:', config)
   }
 
+  /**
+   * This page demonstrates the MessageConstructor component with mock data.
+   */
   return (
-    <div className="container mx-auto py-8">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold mb-2">CSV Message Constructor Test</h1>
-        <p className="text-gray-600">
-          This page demonstrates the CSVMessageConstructor component with mock data.
-          Check the browser console for config updates.
-        </p>
-      </div>
-
-      <div className="h-[calc(100vh-200px)]">
-        <CSVMessageConstructor
-          mockColumns={MOCK_COLUMNS}
-          mockFirstRow={MOCK_FIRST_ROW}
-          onConfigUpdate={handleConfigUpdate}
-        />
-      </div>
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">Message Constructor Test Page</h1>
+      <MessageConstructor
+        mockColumns={MOCK_COLUMNS}
+        mockFirstRow={MOCK_FIRST_ROW}
+        onConfigUpdate={handleConfigUpdate}
+      />
     </div>
   )
 } 
