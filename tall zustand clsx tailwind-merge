@@ -1,0 +1,5 @@
+[33m85aa77b[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m)[m file structure
+[33mfadd954[m Update dependencies and modify components after move
+[33m85f69d6[m File upload // metadata in Supa
+[33mdfe0388[m Fix: Add Suspense boundaries to client components for Next.js 15 compatibility
+[33md390ac5[m Implement Supabase authentication with Next.js - Login, Register, Session management and protected routes
