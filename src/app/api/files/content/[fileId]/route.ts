@@ -123,7 +123,7 @@ async function processTextContent(stream: Readable): Promise<{
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { fileId: string } }
+  context: { params: { fileId: string } }
 ) {
   try {
     // Create Supabase client
@@ -142,7 +142,7 @@ export async function GET(
     const { data: file, error: fileError } = await supabase
       .from('files')
       .select('*')
-      .eq('id', params.fileId)
+      .eq('id', context.params.fileId)
       .single();
 
     if (fileError || !file) {
