@@ -10,6 +10,10 @@
  * - Message management options (placeholder)
  */
 
+'use client'
+
+import Link from 'next/link'
+
 export default function MessagesPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -43,9 +47,10 @@ export default function MessagesPage() {
             <p className="mt-1 text-sm text-gray-500">
               Start a conversation or check back later.
             </p>
-            <div className="mt-6">
-              <button
-                type="button"
+            <div className="mt-6 space-y-3">
+              {/* Link to test page for file content retrieval */}
+              <Link
+                href="/test/file-content"
                 className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
                 <svg
@@ -61,8 +66,8 @@ export default function MessagesPage() {
                     clipRule="evenodd"
                   />
                 </svg>
-                New Message
-              </button>
+                Create Message from File
+              </Link>
             </div>
           </div>
         </div>
