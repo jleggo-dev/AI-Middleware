@@ -5,7 +5,7 @@
  */
 
 import { cookies } from 'next/headers';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 import { parse } from 'csv-parse/sync';
@@ -86,10 +86,12 @@ async function processText(stream: Readable) {
   }
 }
 
-export async function GET(request: Request, { params }: { params: { fileId: string } }) {
+export async function GET(
+  request: NextRequest,
+  context: { params: { fileId: string } }
+) {
   try {
-    // Get file ID from params
-    const fileId = params.fileId;
+    const fileId = context.params.fileId;
     
     // Initialize Supabase client
     const cookieStore = cookies();
