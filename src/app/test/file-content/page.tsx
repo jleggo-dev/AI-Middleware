@@ -100,7 +100,7 @@ export default function FileContentTestPage() {
     setFileContent(null)
     
     try {
-      const response = await fetch(`/api/files/content/${fileId}`)
+      const response = await fetch(`/api/files/content-by-id?fileId=${fileId}`)
       const data = await response.json()
       
       if (!response.ok) {
