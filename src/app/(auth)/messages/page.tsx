@@ -6,15 +6,20 @@
  * 
  * Features:
  * - List of user's messages (placeholder)
- * - Send new message option (placeholder)
- * - Message management options (placeholder)
+ * - Create new message template
+ * - Message management options
  */
 
 'use client'
 
-import Link from 'next/link'
+import { useState } from 'react'
+import { CreateMessageModal } from '@/components/CreateMessageModal/CreateMessageModal'
+import FolderManagementModal from '@/components/FolderManagementModal/FolderManagementModal'
 
 export default function MessagesPage() {
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const [isFolderModalOpen, setIsFolderModalOpen] = useState(false)
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* Page header */}
@@ -48,9 +53,9 @@ export default function MessagesPage() {
               Start a conversation or check back later.
             </p>
             <div className="mt-6 space-y-3">
-              {/* Link to file content test page */}
-              <Link
-                href="/test/file-content"
+              {/* Create Message Button */}
+              <button
+                onClick={() => setIsCreateModalOpen(true)}
                 className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
                 <svg
@@ -66,13 +71,13 @@ export default function MessagesPage() {
                     clipRule="evenodd"
                   />
                 </svg>
-                Create Message from File
-              </Link>
-              
-              {/* Link to template save test page */}
-              <Link
-                href="/test/template-save"
-                className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                Create Message
+              </button>
+
+              {/* Manage Folders Button */}
+              <button
+                onClick={() => setIsFolderModalOpen(true)}
+                className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
               >
                 <svg
                   className="-ml-1 mr-2 h-5 w-5"
@@ -83,16 +88,32 @@ export default function MessagesPage() {
                 >
                   <path
                     fillRule="evenodd"
-                    d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                    d="M2 6a2 2 0 012-2h4l2 2h4a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"
                     clipRule="evenodd"
                   />
                 </svg>
-                Manage Message Templates
-              </Link>
+                Manage Folders
+              </button>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Create Message Modal */}
+      <CreateMessageModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onTemplateCreated={() => {
+          setIsCreateModalOpen(false)
+          // TODO: Refresh messages list
+        }}
+      />
+
+      {/* Folder Management Modal */}
+      <FolderManagementModal
+        isOpen={isFolderModalOpen}
+        onClose={() => setIsFolderModalOpen(false)}
+      />
     </div>
-  );
+  )
 } 

@@ -142,6 +142,7 @@ export async function GET(request: Request) {
         // Create a single column for the text content
         const columnName = `${file.original_name} content`;
         return NextResponse.json({
+          success: true,
           type: 'text',
           warning: result.error,
           columns: [
@@ -158,6 +159,7 @@ export async function GET(request: Request) {
       }
 
       return NextResponse.json({
+        success: true,
         type: 'csv',
         columns: result.columns,
         firstRow: result.firstRow
@@ -167,12 +169,16 @@ export async function GET(request: Request) {
       const result = await processText(response.Body as Readable);
       
       if (result.error) {
-        return NextResponse.json({ error: result.error }, { status: 500 });
+        return NextResponse.json({ 
+          success: false,
+          error: result.error 
+        }, { status: 500 });
       }
 
       // Create a single column for the text content
       const columnName = `${file.original_name} content`;
       return NextResponse.json({
+        success: true,
         type: 'text',
         columns: [
           {
@@ -189,7 +195,11 @@ export async function GET(request: Request) {
   } catch (error) {
     console.error('Error retrieving file content:', error);
     return NextResponse.json(
-      { error: 'Failed to retrieve file content' },
+      { 
+        success: false,
+        error: 'Failed to retrieve file content',
+        message: error instanceof Error ? error.message : 'Unknown error'
+      },
       { status: 500 }
     );
   }

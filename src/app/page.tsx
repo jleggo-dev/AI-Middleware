@@ -16,49 +16,74 @@
  * - next/link: For client-side navigation between pages
  */
 
-import Link from 'next/link';
+'use client'
+
+import { useState } from 'react'
+import Link from 'next/link'
+import FolderManagementModal from '@/components/FolderManagementModal/FolderManagementModal'
 
 export default function Home() {
+  const [isFolderModalOpen, setIsFolderModalOpen] = useState(false)
+
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-white">
-      {/* Main content area */}
-      <main className="flex flex-col items-center justify-center w-full flex-1 px-4 text-center">
-        {/* Page heading */}
-        <h1 className="text-5xl font-bold mb-6">
-          Welcome to <span className="text-indigo-600">AI Middleware</span>
-        </h1>
-        
-        {/* Subheading */}
-        <p className="text-xl mb-8">
-          Your next-generation platform powered by Next.js, Tailwind CSS, and Supabase
-        </p>
-        
-        {/* Action buttons */}
-        <div className="flex flex-wrap items-center justify-around max-w-md mt-6">
-          {/* Sign in button */}
-          <Link
-            href="/login"
-            className="p-4 w-40 text-center bg-indigo-600 rounded-md font-medium text-white hover:bg-indigo-700 transition-colors"
-          >
-            Sign In
-          </Link>
+    <main className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-gray-900 mb-8">
+            Message Management System
+          </h1>
           
-          {/* Create account button */}
-          <Link
-            href="/register"
-            className="p-4 w-40 text-center bg-white border border-indigo-600 rounded-md font-medium text-indigo-600 hover:bg-indigo-50 transition-colors"
-          >
-            Create Account
-          </Link>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+            {/* Create Message Card */}
+            <div className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow duration-300">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+                Create Message
+              </h2>
+              <p className="text-gray-600 mb-6">
+                Create a new message from scratch or from a template
+              </p>
+              <Link
+                href="/create-message"
+                className="inline-block bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors duration-300"
+              >
+                Create Message
+              </Link>
+            </div>
+
+            {/* Manage Templates Card */}
+            <div className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow duration-300">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+                Manage Templates
+              </h2>
+              <p className="text-gray-600 mb-6">
+                Create and manage message templates for different file types
+              </p>
+              <Link
+                href="/templates"
+                className="inline-block bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors duration-300"
+              >
+                Manage Templates
+              </Link>
+            </div>
+          </div>
+
+          {/* Manage Folders Button */}
+          <div className="mt-8">
+            <button
+              onClick={() => setIsFolderModalOpen(true)}
+              className="inline-block bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition-colors duration-300"
+            >
+              Manage Folders
+            </button>
+          </div>
         </div>
-      </main>
-      
-      {/* Footer */}
-      <footer className="flex items-center justify-center w-full h-24 border-t">
-        <p className="text-sm text-gray-600">
-          © {new Date().getFullYear()} AI Middleware. All rights reserved.
-        </p>
-      </footer>
-    </div>
-  );
+      </div>
+
+      {/* Folder Management Modal */}
+      <FolderManagementModal
+        isOpen={isFolderModalOpen}
+        onClose={() => setIsFolderModalOpen(false)}
+      />
+    </main>
+  )
 }

@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     // Parse request body
     const requestData = await request.json()
     
-    // Initialize Supabase client
+    // Initialize Supabase client with cookies
     const cookieStore = cookies()
     const supabase = createRouteHandlerClient({ cookies: () => cookieStore })
     
@@ -31,7 +31,11 @@ export async function POST(request: Request) {
     const { data: { session }, error: sessionError } = await supabase.auth.getSession()
     if (sessionError || !session) {
       return NextResponse.json(
-        { error: 'Authentication required' },
+        { 
+          success: false,
+          error: 'Authentication required',
+          message: 'You must be logged in to save templates'
+        },
         { status: 401 }
       )
     }
@@ -46,7 +50,9 @@ export async function POST(request: Request) {
       if (error instanceof z.ZodError) {
         return NextResponse.json(
           { 
+            success: false,
             error: 'Validation failed',
+            message: 'Invalid template data',
             details: error.errors
           },
           { status: 400 }
@@ -66,7 +72,11 @@ export async function POST(request: Request) {
       
       if (folderError || !folder) {
         return NextResponse.json(
-          { error: 'Folder not found or access denied' },
+          { 
+            success: false,
+            error: 'Folder not found',
+            message: 'The specified folder does not exist or you do not have access to it'
+          },
           { status: 404 }
         )
       }
@@ -83,8 +93,6 @@ export async function POST(request: Request) {
         user_id: userId,
         folder_id: folderId || null,
         ...rest,
-        // Config is already validated and properly structured by Zod
-        // Type is pulled out of templateData.config to the top level
         updated_at: new Date().toISOString()
       })
       .select()
@@ -93,7 +101,12 @@ export async function POST(request: Request) {
     if (error) {
       console.error('Error saving template:', error)
       return NextResponse.json(
-        { error: 'Failed to save template', details: error.message },
+        { 
+          success: false,
+          error: 'Database error',
+          message: 'Failed to save template',
+          details: error.message
+        },
         { status: 500 }
       )
     }
@@ -107,6 +120,7 @@ export async function POST(request: Request) {
     console.error('Error in template save API:', error)
     return NextResponse.json(
       { 
+        success: false,
         error: 'Internal server error',
         message: error instanceof Error ? error.message : 'Unknown error'
       },
