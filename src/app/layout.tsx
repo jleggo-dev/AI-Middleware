@@ -17,20 +17,14 @@
  */
 
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
 
-// Load Geist Sans font with Latin subset
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Load Inter font with Latin subset
+const inter = Inter({
   subsets: ["latin"],
-});
-
-// Load Geist Mono font with Latin subset
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: "--font-inter",
 });
 
 // Metadata for the application (used for SEO and browser tab information)
@@ -49,11 +43,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {/* Wrap all content with AuthProvider to enable authentication */}
+    <html lang="en" className={`${inter.variable}`}>
+      <body className="min-h-screen bg-gray-50">
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
