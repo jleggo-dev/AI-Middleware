@@ -100,7 +100,9 @@ function DashboardContent() {
             </div>
             <div>
               <p className="text-sm font-medium text-gray-500">Email Verified</p>
-              <p className="text-sm text-gray-900">{user.emailVerified ? 'Yes' : 'No'}</p>
+              <p className="text-sm text-gray-900">
+                {user.email_confirmed_at ? 'Yes' : 'No'}
+              </p>
             </div>
           </div>
         </div>
